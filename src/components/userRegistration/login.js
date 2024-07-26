@@ -75,6 +75,8 @@ export default function Login() {
                 
                 <input type="submit" />
             </form>
+            <Link to="/register">Create Account</Link>
+            <Link to="/forget-password">forget password</Link>
         </div>
     );
 }
