@@ -12,6 +12,7 @@ import ForgetPassword from "./components/userRegistration/forgetpassword";
 import ResetPassword from "./components/userRegistration/resetpassword";
 //Care-Taker Creation
 import CreateCareTaker from "./components/careTaker-Component/create-careTaker";
+import CareTakerAVList from "./components/careTaker-Component/careTaker-AV-list";
 import CreatePetParent from "./components/petParent-Component/petParent-Form";
 import PetParentList from "./components/petParent-Component/petParent-list-all";
 
@@ -45,6 +46,7 @@ function App() {
         |<Link to='/create-caretaker'>Create-Caretaker</Link>
         |<Link to='/create-petparent'>Create-PetParent</Link>
         |<Link to='/all-petparents'>All-PetParents</Link>
+        |<Link to='/all-caretaker-v'>All-v-CareTaker</Link>
         |<Link to='/' onClick={()=>{
           localStorage.removeItem('token')
           dispatch({type:'LOGOUT'})
@@ -63,6 +65,7 @@ function App() {
         <Route path="/account" element={<Account/>}/>
 
         <Route path="/create-caretaker" element={<CreateCareTaker/>}/>
+        <Route path="/all-caretaker-v" element={<CareTakerAVList/>}/>
         <Route path="/create-petparent" element={<CreatePetParent/>}/>
         <Route path="/all-petparents" element={<PetParentList/>}/>
       </Routes>

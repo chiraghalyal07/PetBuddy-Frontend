@@ -17,6 +17,9 @@ export default function CreateCareTaker() {
         clientErrors: {}
     });
 
+    // const [name,setName] = useState('');
+    // const [amount,setAmount] = useState('');
+    // const [time,setTime] = useState('');
     const [errors, setErrors] = useState({});
 
     const runValidation = () => {
@@ -41,31 +44,39 @@ export default function CreateCareTaker() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        setForm(prevForm => ({ ...prevForm, [name]: value }));
     };
 
     const handleServiceChargeChange = (index, e) => {
         const { name, value } = e.target;
-        const updatedServiceCharges = [...form.serviceCharges];
-        updatedServiceCharges[index][name] = value;
-        setForm({ ...form, serviceCharges: updatedServiceCharges });
+        const updatedServiceCharges = form.serviceCharges.map((charge,i)=>
+        i === index ?{...charge,[name]:value}:charge);
+        setForm(prevForm =>({ ...prevForm, serviceCharges: updatedServiceCharges }));
     };
 
     const handleFileChange = (e) => {
         const { name, files } = e.target;
-        setForm({ ...form, [name]: files[0] });
+        setForm(prevForm =>({ ...prevForm, [name]: files[0] }));
     };
 
     const handleAddServiceCharge = () => {
-        setForm({
-            ...form,
-            serviceCharges: [...form.serviceCharges, { name: '', amount: '', time: '' }]
-        });
+        // if(name && amount && time){
+            // const newServiceCharge = {name,amount,time};
+            setForm(prevForm =>({
+                ...prevForm,
+                serviceCharges:[...prevForm.serviceCharges,{name:'',amount:'',time:''}]
+            }));
+            // setName('');
+            // setAmount('');
+            // setTime('');
+        // }else{
+        //     console.error("Name, Amount and Time are required")
+        // }
     };
 
     const handleRemoveServiceCharge = (index) => {
         const updatedServiceCharges = form.serviceCharges.filter((_, i) => i !== index);
-        setForm({ ...form, serviceCharges: updatedServiceCharges });
+        setForm(prevForm=>({ ...prevForm, serviceCharges: updatedServiceCharges }));
     };
 
     const handleSubmit = async (e) => {
@@ -77,29 +88,34 @@ export default function CreateCareTaker() {
                 formData.append('careTakerBusinessName', form.careTakerBusinessName);
                 formData.append('address', form.address);
                 formData.append('bio', form.bio);
-                formData.append('serviceCharges', JSON.stringify(form.serviceCharges));
                 formData.append('photo', form.photo);
                 formData.append('proof', form.proof);
+                formData.append('serviceCharges', JSON.stringify(form.serviceCharges));
+
+                // Log FormData content for debugging
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                console.log('Service Charges before appending to FormData:', form.serviceCharges);
 
                 const token = localStorage.getItem('token'); // Adjust as per your token storage method
-
                 const response = await axios.post('/api/newcaretaker', formData, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': `${token}`,
                         'Content-Type': 'multipart/form-data',
                     }
                 });
                 console.log(response.data);
                 toast.success('CareTaker created successfully!');
-                navigate('/'); // Redirect to a different page after successful creation
+                // navigate('/'); // Redirect to a different page
 
             } catch (err) {
                 console.log(err);
                 const serverErrors = err.response && err.response.data ? err.response.data.errors : 'An unexpected error occurred';
-                setForm({ ...form, serverErrors });
+                setForm(prevForm =>({ ...prevForm, serverErrors }));
             }
         } else {
-            setForm({ ...form, clientErrors: errors });
+            setForm(prevForm =>({ ...prevForm, clientErrors: errors }));
         }
     };
 
@@ -148,6 +164,9 @@ export default function CreateCareTaker() {
                         {index > 0 && <button type='button' onClick={() => handleRemoveServiceCharge(index)}>Remove</button>}
                     </div>
                 ))}
+                {/* <input type='text' value={name} onChange={(e)=>setName(e.target.value)} placeholder='Service Name' /><br/>
+                <input type='text' value={amount} onChange={(e)=>setAmount(e.target.value)} placeholder='Amount' /><br/>
+                <input type='text' value={time} onChange={(e)=>setTime(e.target.value)} placeholder='Duration' /><br/> */}
                 <button type='button' onClick={handleAddServiceCharge}>Add Service Charge</button><br/>
 
                 <label htmlFor='photo'>Provide Profile Photo</label><br/>
