@@ -1,12 +1,12 @@
-/*
 import { useState } from 'react';
 import axios from '../../config/axios';
+import _ from 'lodash';
 
 export default function PetParentForm(){
     const [form,setForm] = useState({
         address:'',
-        photo:'',
-        proof:'',
+        photo:null,
+        proof:null,
         serverErrors:null,
         clientErrors:{}
     });
@@ -19,19 +19,24 @@ export default function PetParentForm(){
         setErrors(tempErrors);
     }
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        const { name, value,files } = e.target;
+        if (files) {
+            setForm({ ...form, [name]: files[0] });  
+        } else {
+            setForm({ ...form, [name]: value });
+        }
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const formData = _.pick(form, ['address']);
+        const formData = _.pick(form, ['address','photo','proof']);
 
         runValidations();
 
         if (Object.keys(errors).length === 0) {
             try {
-                const response = await axios.post('/api/users/register', formData,{
+                const response = await axios.post('/api/newparent',formData,{
                     headers:{
+                        'Content-Type':'multipart/form-data',
                         Authorization:localStorage.getItem('token')
                     }
                 });
@@ -75,11 +80,11 @@ export default function PetParentForm(){
                 {errors.address && <span>{errors.address}</span>}<br/>
 
                 <label htmlFor='photo'>Upload Profile Picture</label><br/>
-                <input type='file' value={form.photo} onChange={handleChange} name='photo' id='photo'/><br/>
+                <input type='file' onChange={handleChange} name='photo' id='photo'/><br/>
                 {errors.photo && <span>{errors.photo}</span>}<br/>
 
                 <label htmlFor='proof'>Upload Government Proof(Aadhaar)</label><br/>
-                <input type='file' value={form.proof} onChange={handleChange} name='proof' id='proof'/><br/>
+                <input type='file'  onChange={handleChange} name='proof' id='proof'/><br/>
                 {errors.proof && <span>{errors.proof}</span>}<br/>
 
                 <input type='submit'/>
@@ -87,94 +92,4 @@ export default function PetParentForm(){
             {form.serverErrors && displayErrors()}
         </div>
     )
-}*/
-import React, { useState } from 'react';
-import axios from 'axios';
-
-const CreatePetParent = () => {
-  const [formData, setFormData] = useState({
-    address: ''
-  });
-
-  const [files, setFiles] = useState({
-    photo: null,
-    proof: null
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setFiles({
-      ...files,
-      [name]: files[0]
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const data = new FormData();
-    data.append('address', formData.address);
-    if (files.photo) data.append('photo', files.photo);
-    if (files.proof) data.append('proof', files.proof);
-
-    const token = localStorage.getItem('token');
-
-    try {
-      const response = await axios.post('/api/newparent', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      console.log('PetParent created successfully:', response.data);
-    } catch (error) {
-      console.error('Error creating PetParent:', error.response ? error.response.data : error.message);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Address:</label>
-        <input
-          type="text"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div>
-        <label>Profile Photo:</label>
-        <input
-          type="file"
-          name="photo"
-          accept="image/*"
-          onChange={handleFileChange}
-          required
-        />
-      </div>
-      <div>
-        <label>Proof Document:</label>
-        <input
-          type="file"
-          name="proof"
-          accept="image/*,application/pdf"
-          onChange={handleFileChange}
-          required
-        />
-      </div>
-      <button type="submit">Create PetParent</button>
-    </form>
-  );
-};
-
-export default CreatePetParent;
+}

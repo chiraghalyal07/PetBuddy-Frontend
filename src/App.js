@@ -13,6 +13,7 @@ import ResetPassword from "./components/userRegistration/resetpassword";
 //Care-Taker Creation
 import CreateCareTaker from "./components/careTaker-Component/create-careTaker";
 import CreatePetParent from "./components/petParent-Component/petParent-Form";
+import PetParentList from "./components/petParent-Component/petParent-list-all";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -43,7 +44,8 @@ function App() {
         |<Link to='/account'>Account</Link>|
         |<Link to='/create-caretaker'>Create-Caretaker</Link>
         |<Link to='/create-petparent'>Create-PetParent</Link>
-        <Link to='/' onClick={()=>{
+        |<Link to='/all-petparents'>All-PetParents</Link>
+        |<Link to='/' onClick={()=>{
           localStorage.removeItem('token')
           dispatch({type:'LOGOUT'})
         }}>Logout</Link>
@@ -62,6 +64,7 @@ function App() {
 
         <Route path="/create-caretaker" element={<CreateCareTaker/>}/>
         <Route path="/create-petparent" element={<CreatePetParent/>}/>
+        <Route path="/all-petparents" element={<PetParentList/>}/>
       </Routes>
     </div>
   );
