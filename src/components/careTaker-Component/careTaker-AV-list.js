@@ -1,5 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import axios from '../../config/axios';
+import {Link} from 'react-router-dom'
 
 const CareTakerAVList = () =>{
     const [careTakers,setCareTakers] = useState([]);
@@ -41,7 +42,19 @@ const CareTakerAVList = () =>{
                     ):(
                         <p>User Information not available</p>
                     )}
+                    <p>Care-Taker Business Name:{careTaker.careTakerBusinessName}</p>
                     <p>Address:{careTaker.address}</p>
+                    <p>Bio:{careTaker.bio}</p>
+                    <div>
+                        <h3>Services:</h3>
+                        {careTaker.serviceCharges.map((charge, index) => (
+                            <div key={index}>
+                                <p>Service Name: {charge.name}</p>
+                                <p>Service Amount: {charge.amount}</p>
+                                <p>Service Time: {charge.time}</p>
+                            </div>
+                        ))}
+                    </div>
                     <div>
                         <h3>Profile Photo</h3>
                         <img src={careTaker.photo} alt='Profile' style={{maxWidth:'200px'}}/>
@@ -54,6 +67,7 @@ const CareTakerAVList = () =>{
                             <img src={careTaker.proof} alt='Proof' style={{maxWidth:'200px'}}/>
                         )}
                     </div>
+                    <Link to={`/single-caretaker/${careTaker._id}`}>View Details</Link>
                 </div>
             ))}
         </div>

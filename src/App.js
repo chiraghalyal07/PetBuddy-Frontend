@@ -13,8 +13,11 @@ import ResetPassword from "./components/userRegistration/resetpassword";
 //Care-Taker Creation
 import CreateCareTaker from "./components/careTaker-Component/create-careTaker";
 import CareTakerAVList from "./components/careTaker-Component/careTaker-AV-list";
+import CareTakerDetails from "./components/careTaker-Component/careTaker-single";
+//Pet-Parent Creation
 import CreatePetParent from "./components/petParent-Component/petParent-Form";
 import PetParentList from "./components/petParent-Component/petParent-list-all";
+import PetParentDetail from "./components/petParent-Component/petParent-Single";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -66,8 +69,11 @@ function App() {
 
         <Route path="/create-caretaker" element={<CreateCareTaker/>}/>
         <Route path="/all-caretaker-v" element={<CareTakerAVList/>}/>
+        <Route path="/single-caretaker/:id" element={<CareTakerDetails/>}/>
+
         <Route path="/create-petparent" element={<CreatePetParent/>}/>
         <Route path="/all-petparents" element={<PetParentList/>}/>
+        <Route path="/single-petparent/:id" element={<PetParentDetail/>}/>
       </Routes>
     </div>
   );

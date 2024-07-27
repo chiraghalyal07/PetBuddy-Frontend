@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/axios';
+import {Link} from 'react-router-dom'
 
 const PetParentList = () => {
   const [petParents, setPetParents] = useState([]);
@@ -8,11 +9,10 @@ const PetParentList = () => {
 
   useEffect(() => {
     const fetchPetParents = async () => {
-      const token = localStorage.getItem('token');
       try {
         const response = await axios.get('/api/allparents', {
           headers: {
-            'Authorization': ` ${token}`
+            Authorization:localStorage.getItem('token')
           }
         });
         setPetParents(response.data);
@@ -60,6 +60,7 @@ const PetParentList = () => {
               <img src={petParent.proof} alt="Proof" style={{ maxWidth: '200px' }} />
             )}
           </div>
+          <Link to={`/single-petparent/${petParent._id}`}>View Details</Link>
         </div>
       ))}
     </div>
