@@ -67,7 +67,7 @@ const CareTakerAVList = () =>{
                             <img src={careTaker.proof} alt='Proof' style={{maxWidth:'200px'}}/>
                         )}
                     </div>
-                    <Link to={`/single-caretaker/${careTaker._id}`}>View Details</Link>
+                    <Link to={`/single-caretaker`}>View Details</Link>
                 </div>
             ))}
         </div>
