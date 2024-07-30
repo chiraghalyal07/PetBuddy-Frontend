@@ -60,7 +60,7 @@ const PetParentList = () => {
               <img src={petParent.proof} alt="Proof" style={{ maxWidth: '200px' }} />
             )}
           </div>
-          <Link to={`/single-petparent/${petParent._id}`}>View Details</Link>
+          <Link to={`/single-petparent`}>View Details</Link>
         </div>
       ))}
     </div>

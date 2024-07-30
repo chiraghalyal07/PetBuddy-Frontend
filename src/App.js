@@ -15,10 +15,12 @@ import CreateCareTaker from "./components/careTaker-Component/create-careTaker";
 import CareTakerAVList from "./components/careTaker-Component/careTaker-AV-list";
 import CareTakerDetails from "./components/careTaker-Component/careTaker-single";
 import UpdateCareTaker from "./components/careTaker-Component/careTaker-update";
+
 //Pet-Parent Creation
 import PetParentForm from "./components/petParent-Component/petParent-Form";
 import PetParentList from "./components/petParent-Component/petParent-list-all";
 import PetParentDetail from "./components/petParent-Component/petParent-Single";
+import UpdatePetParent from "./components/petParent-Component/petParent-update";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -46,12 +48,13 @@ function App() {
         </>
       ):(
         <>
-        |<Link to='/account'>Account</Link>|
-        |<Link to='/create-caretaker'>Create-Caretaker</Link>
-        |<Link to='/create-petparent'>Create-PetParent</Link>
+        |<Link to='/account'>Account</Link>
+        {/* |<Link to='/create-caretaker'>Create-Caretaker</Link> */}
+        {/* |<Link to='/create-petparent'>Create-PetParent</Link> */}
         |<Link to='/all-petparents'>All-PetParents</Link>
         |<Link to='/all-caretaker-v'>All-v-CareTaker</Link>
-        |<Link to='/single-caretaker'>Profile</Link>
+        |<Link to='/single-caretaker'>Profile-C</Link>
+        |<Link to='/single-petparent'>Profile-P</Link>
         |<Link to='/' onClick={()=>{
           localStorage.removeItem('token')
           dispatch({type:'LOGOUT'})
@@ -73,10 +76,12 @@ function App() {
         <Route path="/all-caretaker-v" element={<CareTakerAVList/>}/>
         <Route path="/single-caretaker" element={<CareTakerDetails/>}/>
         <Route path="/update-caretaker/:id" element={<UpdateCareTaker/>}/>
+        
 
         <Route path="/create-petparent" element={<PetParentForm/>}/>
         <Route path="/all-petparents" element={<PetParentList/>}/>
-        <Route path="/single-petparent/:id" element={<PetParentDetail/>}/>
+        <Route path="/single-petparent" element={<PetParentDetail/>}/>
+        <Route path="/update-petparent/:id" element={<UpdatePetParent/>}/>
       </Routes>
     </div>
   );

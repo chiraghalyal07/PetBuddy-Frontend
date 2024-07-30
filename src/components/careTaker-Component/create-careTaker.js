@@ -1,9 +1,9 @@
-/*
 import { useState } from 'react';
 import axios from '../../config/axios';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Spinner from '../../utility/spinner';
 
 export default function CreateCareTaker() {
     const navigate = useNavigate();
@@ -18,10 +18,8 @@ export default function CreateCareTaker() {
         clientErrors: {}
     });
 
-    // const [name,setName] = useState('');
-    // const [amount,setAmount] = useState('');
-    // const [time,setTime] = useState('');
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const runValidation = () => {
         const tempErrors = {};
@@ -40,6 +38,17 @@ export default function CreateCareTaker() {
         if (!form.proof) {
             tempErrors.proof = 'Government Proof is required';
         }
+        form.serviceCharges.forEach((charge, index) => {
+            if (!charge.name || charge.name.trim().length === 0) {
+                tempErrors[`serviceCharges[${index}].name`] = 'Service name is required';
+            }
+            if (!charge.amount || charge.amount.trim().length === 0) {
+                tempErrors[`serviceCharges[${index}].amount`] = 'Service amount is required';
+            }
+            if (!charge.time || charge.time.trim().length === 0) {
+                tempErrors[`serviceCharges[${index}].time`] = 'Service time is required';
+            }
+        });
         setErrors(tempErrors);
     };
 
@@ -61,18 +70,10 @@ export default function CreateCareTaker() {
     };
 
     const handleAddServiceCharge = () => {
-        // if(name && amount && time){
-            // const newServiceCharge = {name,amount,time};
             setForm(prevForm =>({
                 ...prevForm,
                 serviceCharges:[...prevForm.serviceCharges,{name:'',amount:'',time:''}]
             }));
-            // setName('');
-            // setAmount('');
-            // setTime('');
-        // }else{
-        //     console.error("Name, Amount and Time are required")
-        // }
     };
 
     const handleRemoveServiceCharge = (index) => {
@@ -84,6 +85,7 @@ export default function CreateCareTaker() {
         e.preventDefault();
         runValidation();
         if (Object.keys(errors).length === 0) {
+            setLoading(true);
             try {
                 const formData = new FormData();
                 formData.append('careTakerBusinessName', form.careTakerBusinessName);
@@ -107,14 +109,17 @@ export default function CreateCareTaker() {
                     }
                 });
                 console.log(response.data);
-                toast.success('CareTaker created successfully!');
-                // navigate('/'); // Redirect to a different page
+                setLoading(false);
+                toast.success("Profile Created successfully.");
+                alert("Profile Created successfully.");
+               
+                navigate('/single-caretaker'); // Redirect to a different page
 
             } catch (err) {
                 console.log(err);
                 const serverErrors = err.response && err.response.data ? err.response.data.errors : 'An unexpected error occurred';
                 setForm(prevForm =>({ ...prevForm, serverErrors }));
-            }
+            } 
         } else {
             setForm(prevForm =>({ ...prevForm, clientErrors: errors }));
         }
@@ -142,6 +147,7 @@ export default function CreateCareTaker() {
 
     return (
         <div>
+            {loading && <Spinner />}
             <h2>New CareTaker Form..!</h2>
             <form onSubmit={handleSubmit}>
                 <label htmlFor='careTakerBusinessName'>Enter Care-Taker Business Name</label><br/>
@@ -159,16 +165,39 @@ export default function CreateCareTaker() {
                 <label htmlFor='serviceCharges'>Enter Service Charges</label><br/>
                 {form.serviceCharges.map((charge, index) => (
                     <div key={index}>
-                        <input type='text' value={charge.name} onChange={(e) => handleServiceChargeChange(index, e)} name='name' placeholder='Service Name'/><br/>
-                        <input type='text' value={charge.amount} onChange={(e) => handleServiceChargeChange(index, e)} name='amount' placeholder='Amount'/><br/>
-                        <input type='text' value={charge.time} onChange={(e) => handleServiceChargeChange(index, e)} name='time' placeholder='Time'/><br/>
+                        <select
+                            name='name'
+                            value={charge.name}
+                            onChange={(e) => handleServiceChargeChange(index, e)}
+                        >
+                            <option value=''>Select Service</option>
+                            <option value='Pet-Boarding'>Pet-Boarding</option>
+                            <option value='Pet-Sitting'>Pet-Sitting</option>
+                            <option value='Pet-Walking'>Pet-Walking</option>
+                            <option value='Pet-Grooming'>Pet-Grooming</option>
+                            <option value='Pet-Taxi'>Pet-Taxi</option>
+                            <option value='Pet-Training'>Pet-Training</option>
+                            <option value='Vet-Consult'>Vet-Consult</option>
+                            <option value='Others'>Others...</option>
+                        </select>
+                        {/* {charge.name === 'Others' && (
+                            <input
+                                type='text'
+                                value={charge.customName || ''}
+                                onChange={(e) => handleServiceChargeChange(index, e)}
+                                name='name'
+                                placeholder='Custom Service Name'
+                            />
+                        )} */}{errors[`serviceCharges[${index}].name`] && <span>{errors[`serviceCharges[${index}].name`]}</span>}
+                        <br /><input type='text' value={charge.amount} onChange={(e) => handleServiceChargeChange(index, e)} name='amount' placeholder='Amount' />
+                        {errors[`serviceCharges[${index}].amount`] && <span>{errors[`serviceCharges[${index}].amount`]}</span>}<br />
+                        <input type='text' value={charge.time} onChange={(e) => handleServiceChargeChange(index, e)} name='time' placeholder='Time' />
+                        {errors[`serviceCharges[${index}].time`] && <span>{errors[`serviceCharges[${index}].time`]}</span>}<br />
                         {index > 0 && <button type='button' onClick={() => handleRemoveServiceCharge(index)}>Remove</button>}
                     </div>
                 ))}
-                // { <input type='text' value={name} onChange={(e)=>setName(e.target.value)} placeholder='Service Name' /><br/>
-                // <input type='text' value={amount} onChange={(e)=>setAmount(e.target.value)} placeholder='Amount' /><br/>
-                // <input type='text' value={time} onChange={(e)=>setTime(e.target.value)} placeholder='Duration' /><br/> }
                 <button type='button' onClick={handleAddServiceCharge}>Add Service Charge</button><br/>
+                {errors.serviceCharges && <span>{errors.serviceCharges}</span>}<br/>
 
                 <label htmlFor='photo'>Provide Profile Photo</label><br/>
                 <input type='file' onChange={handleFileChange} name='photo' id='photo'/><br/>
@@ -184,8 +213,9 @@ export default function CreateCareTaker() {
         </div>
     );
 }
-*/
 
+/*
+// cusomizing other in servicechages dropdown
 import React, { useState } from 'react';
 import axios from '../../config/axios';
 import { useNavigate } from 'react-router-dom';
@@ -206,6 +236,7 @@ export default function CreateCareTaker() {
     });
 
     const [errors, setErrors] = useState({});
+    const [customServiceName, setCustomServiceName] = useState('');
 
     const runValidation = () => {
         const tempErrors = {};
@@ -242,6 +273,14 @@ export default function CreateCareTaker() {
 
     const handleServiceNameChange = (index, e) => {
         const { value } = e.target;
+        const updatedServiceCharges = form.serviceCharges.map((charge, i) =>
+            i === index ? { ...charge, name: value } : charge
+        );
+        setForm(prevForm => ({ ...prevForm, serviceCharges: updatedServiceCharges }));
+    };
+    const handleCustomServiceNameChange = (index, e) => {
+        const { value } = e.target;
+        setCustomServiceName(value);
         const updatedServiceCharges = form.serviceCharges.map((charge, i) =>
             i === index ? { ...charge, name: value } : charge
         );
@@ -339,6 +378,7 @@ export default function CreateCareTaker() {
                             name='name'
                             value={charge.name}
                             onChange={(e) => handleServiceNameChange(index, e)}
+                            // onBlur={(e) => handleServiceNameChange(index, e)}
                         >
                             <option value=''>Select Service</option>
                             <option value='Pet-Boarding'>Pet-Boarding</option>
@@ -351,7 +391,12 @@ export default function CreateCareTaker() {
                             <option value='Others'>Others...</option>
                         </select><br />
                         {charge.name === 'Others' && (
-                            <input type='text' value={charge.name} onChange={(e) => handleServiceChargeChange(index, e)} name='name' placeholder='Service Name'/>
+                            <input
+                            type='text'
+                            value={customServiceName}
+                            onChange={(e) => handleCustomServiceNameChange(index, e)}
+                            placeholder='Service Name'
+                        />
                         )}
                         <input type='text' value={charge.amount} onChange={(e) => handleServiceChargeChange(index, e)} name='amount' placeholder='Amount' /><br />
                         <input type='text' value={charge.time} onChange={(e) => handleServiceChargeChange(index, e)} name='time' placeholder='Time' /><br />
@@ -374,3 +419,4 @@ export default function CreateCareTaker() {
         </div>
     );
 }
+*/
