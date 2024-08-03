@@ -1,0 +1,19 @@
+.all-bookings {
+    padding: 20px;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .booking-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .booking-item {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+  

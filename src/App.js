@@ -14,6 +14,7 @@ import ResetPassword from "./components/userRegistration/resetpassword";
 import CreateCareTaker from "./components/careTaker-Component/create-careTaker";
 import CareTakerAVList from "./components/careTaker-Component/careTaker-AV-list";
 import CareTakerDetails from "./components/careTaker-Component/careTaker-single";
+import CareTakerSingleDetails from "./components/careTaker-Component/careTaker-one-params";
 import UpdateCareTaker from "./components/careTaker-Component/careTaker-update";
 
 //Pet-Parent Creation
@@ -21,6 +22,16 @@ import PetParentForm from "./components/petParent-Component/petParent-Form";
 import PetParentList from "./components/petParent-Component/petParent-list-all";
 import PetParentDetail from "./components/petParent-Component/petParent-Single";
 import UpdatePetParent from "./components/petParent-Component/petParent-update";
+
+//Pets Creation
+import PetForm from "./components/pets-Component/pet-create";
+import PetAccount from "./components/pets-Component/pet-singlepet";
+import PetUpdate from "./components/pets-Component/pet-update";
+
+//booking Creation
+import BookingForm from "./components/booking-Component/booking-create";
+import AllBooking from "./components/booking-Component/booking-history";
+import BookingDetails from "./components/booking-Component/booking-details-id";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -55,6 +66,7 @@ function App() {
         |<Link to='/all-caretaker-v'>All-v-CareTaker</Link>
         |<Link to='/single-caretaker'>Profile-C</Link>
         |<Link to='/single-petparent'>Profile-P</Link>
+        |<Link to='/single-pet'>Pets-Profile</Link>
         |<Link to='/' onClick={()=>{
           localStorage.removeItem('token')
           dispatch({type:'LOGOUT'})
@@ -74,6 +86,7 @@ function App() {
 
         <Route path="/create-caretaker" element={<CreateCareTaker/>}/>
         <Route path="/all-caretaker-v" element={<CareTakerAVList/>}/>
+        <Route path="/caretaker-params-one/:id" element={<CareTakerSingleDetails/>}/>
         <Route path="/single-caretaker" element={<CareTakerDetails/>}/>
         <Route path="/update-caretaker/:id" element={<UpdateCareTaker/>}/>
         
@@ -82,6 +95,16 @@ function App() {
         <Route path="/all-petparents" element={<PetParentList/>}/>
         <Route path="/single-petparent" element={<PetParentDetail/>}/>
         <Route path="/update-petparent/:id" element={<UpdatePetParent/>}/>
+
+        <Route path="/create-pet" element={<PetForm/>}/>
+        <Route path="/single-pet" element={<PetAccount/>}/>
+        <Route path="/update-pet/:id" element={<PetUpdate/>}/>
+
+        <Route path="/create-booking/:id" element={<BookingForm/>}/>
+        <Route path="/booking-history" element={<AllBooking/>}/>
+        <Route path="/booking-details/:bookingId" element={<BookingDetails/>}/>
+
+
       </Routes>
     </div>
   );

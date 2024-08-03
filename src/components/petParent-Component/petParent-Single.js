@@ -158,6 +158,9 @@ const PetParentDetails = () => {
                     </div>
                     <button onClick={() => navigate(`/update-petparent/${petParent._id}`)}>Update your Profile</button>
                     <button onClick={handleDelete}>Delete your Profile</button>
+                    <hr/>
+                    <button onClick={()=>navigate(`/create-pet`)}>Enter Your Pet Details</button>
+                    <button onClick={()=>navigate(`/booking-history`)}>Booking History</button>
                 </div>
             ) : (
                 <div>
