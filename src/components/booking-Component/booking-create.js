@@ -184,7 +184,7 @@ const BookingForm = () => {
       </div>
       <div>
         <p>Total Amount: ₹ {totalAmount.toFixed(2)}</p>
-        <p>Booking Duration: {bookingDurationInHours} hours</p>
+        <p>Booking Duration: {bookingDurationInHours.toFixed(2)} hours</p>
         <p>CareTaker: {caretakerBusinessName}</p>
       </div>
       <button type="submit">Book Now</button>

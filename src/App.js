@@ -16,6 +16,7 @@ import CareTakerAVList from "./components/careTaker-Component/careTaker-AV-list"
 import CareTakerDetails from "./components/careTaker-Component/careTaker-single";
 import CareTakerSingleDetails from "./components/careTaker-Component/careTaker-one-params";
 import UpdateCareTaker from "./components/careTaker-Component/careTaker-update";
+import AllBookingCareTaker from "./components/careTaker-Component/all-booking";
 
 //Pet-Parent Creation
 import PetParentForm from "./components/petParent-Component/petParent-Form";
@@ -89,6 +90,7 @@ function App() {
         <Route path="/caretaker-params-one/:id" element={<CareTakerSingleDetails/>}/>
         <Route path="/single-caretaker" element={<CareTakerDetails/>}/>
         <Route path="/update-caretaker/:id" element={<UpdateCareTaker/>}/>
+        <Route path="/all-booking-caretaker" element={<AllBookingCareTaker/>}/>
         
 
         <Route path="/create-petparent" element={<PetParentForm/>}/>

@@ -106,6 +106,8 @@ const CareTakerDetails = () => {
                     </div>
                     <button onClick={() => navigate(`/update-caretaker/${careTaker._id}`)}>Update your Profile</button>
                     <button onClick={handleDelete}>Delete your Profile</button>
+
+                    <button onClick={()=> navigate(`/all-booking-caretaker`)}>View all My Booking</button>
                 </div>
             ) : (
                 <div>

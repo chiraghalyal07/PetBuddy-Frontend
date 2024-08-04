@@ -83,16 +83,17 @@ const BookingDetails = () => {
 
 export default BookingDetails;
 */
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../../config/axios';
-import { Container, Typography, Button, Paper, Avatar, List, ListItem, ListItemText } from '@mui/material';
+import { Container, Typography, Button, Paper, Avatar, List, ListItem, ListItemText} from '@mui/material';
 
 const BookingDetails = () => {
   const { bookingId } = useParams();
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState(null);
-  const [view, setView] = useState('details');
+  const [view, setView] = useState('');
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
@@ -109,23 +110,30 @@ const BookingDetails = () => {
   if (error) return <Typography color="error">{error}</Typography>;
   if (!booking) return <Typography>Loading...</Typography>;
 
-  const { date, userId, caretakerId, petId, petparentId, totalAmount, serviceName, status, bookingDurationInHours } = booking;
+  const { date, userId, caretakerId, petId, petparentId, totalAmount, serviceName, status, bookingDurationInHours, Accepted } = booking;
+
+  const toggleView = (viewName) => {
+    setView(prevView => (prevView === viewName ? '' : viewName));
+  };
 
   return (
     <Container>
       <Typography variant="h4" gutterBottom>Booking Details</Typography>
       <Paper style={{ padding: 20, marginBottom: 20 }}>
-        <Typography variant="h6" gutterBottom>Service Details</Typography>
+        <Typography variant="h6" gutterBottom><strong>Service Details</strong></Typography>
         <Typography variant="body1"><strong>Service Name:</strong> {serviceName}</Typography>
         <Typography variant="body1"><strong>Start Time:</strong> {new Date(date.startTime).toLocaleString()}</Typography>
         <Typography variant="body1"><strong>End Time:</strong> {new Date(date.endTime).toLocaleString()}</Typography>
         <Typography variant="body1"><strong>Total Amount:</strong> ₹{totalAmount}</Typography>
         <Typography variant="body1"><strong>Booking Duration:</strong> {bookingDurationInHours} hours</Typography>
         <Typography variant="body1"><strong>Status:</strong> {status}</Typography>
+        <Typography variant="body1"><strong>Booking Acceptance:</strong> {Accepted ? 'Accepted' : 'Denied'}</Typography>
       </Paper>
-      <Button variant="contained" color="primary" onClick={() => alert('Payment functionality is not yet implemented.')} style={{ marginRight: 10 }}>Make Payment</Button>
-      <Button variant="contained" color="secondary" onClick={() => setView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
-      <Button variant="contained" color="secondary" onClick={() => setView('careTakerDetails')}>View CareTaker Details</Button>
+     
+      <Button variant="contained" color="primary" onClick={() => alert('Payment can be done only when the booking is accepted.')} style={{ marginRight: 10 }}>Make Payment</Button>
+      
+      <Button variant="contained" color="secondary" onClick={() => toggleView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
+      <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')}>View CareTaker Details</Button>
       {view === 'petDetails' && (
         <Paper style={{ padding: 20, marginTop: 20 }}>
           <Typography variant="h6" gutterBottom>Pet Details</Typography>
