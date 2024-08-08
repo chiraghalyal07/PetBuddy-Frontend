@@ -85,7 +85,7 @@ export default BookingDetails;
 */
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import axios from '../../config/axios';
 import { Container, Typography, Button, Paper, Avatar, List, ListItem, ListItemText} from '@mui/material';
 
@@ -94,6 +94,7 @@ const BookingDetails = () => {
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState(null);
   const [view, setView] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
@@ -130,10 +131,11 @@ const BookingDetails = () => {
         <Typography variant="body1"><strong>Booking Acceptance:</strong> {Accepted ? 'Accepted' : 'Denied'}</Typography>
       </Paper>
      
-      <Button variant="contained" color="primary" onClick={() => alert('Payment can be done only when the booking is accepted.')} style={{ marginRight: 10 }}>Make Payment</Button>
+      <Button variant="contained" color="primary" onClick={() => navigate(`/payment/${bookingId}`)} style={{ marginRight: 10 }}>Make Payment</Button>
       
       <Button variant="contained" color="secondary" onClick={() => toggleView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
-      <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')}>View CareTaker Details</Button>
+      <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')} style={{ marginRight: 10 }}>View CareTaker Details</Button>
+      <Button variant="contained" color="secondary" onClick={()=> navigate(`/booking-history`)} style={{ marginRight: 10 }}>Booking History</Button>
       {view === 'petDetails' && (
         <Paper style={{ padding: 20, marginTop: 20 }}>
           <Typography variant="h6" gutterBottom>Pet Details</Typography>

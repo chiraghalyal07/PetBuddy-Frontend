@@ -34,6 +34,11 @@ import BookingForm from "./components/booking-Component/booking-create";
 import AllBooking from "./components/booking-Component/booking-history";
 import BookingDetails from "./components/booking-Component/booking-details-id";
 
+//payment Creation
+import CreatePayment from "./components/payment-Component/payment-create";
+import Success from "./components/payment-Component/success";
+import Failure from "./components/payment-Component/failure";
+
 function App() {
   const {user,dispatch} = useAuth()
   useEffect(()=>{
@@ -105,6 +110,10 @@ function App() {
         <Route path="/create-booking/:id" element={<BookingForm/>}/>
         <Route path="/booking-history" element={<AllBooking/>}/>
         <Route path="/booking-details/:bookingId" element={<BookingDetails/>}/>
+
+        <Route path="/payment/:bookingId" element={<CreatePayment/>} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/failure" element={<Failure />} />
 
 
       </Routes>

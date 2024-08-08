@@ -1,9 +1,9 @@
 //all booking of particular petParent(booking history)
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../../config/axios';
-import './booking.css'; 
-import { Container, Typography, Paper, Button, Avatar, List, ListItem, ListItemText, ListItemAvatar, Divider, Grid, IconButton, Pagination, PaginationItem } from '@mui/material';
+import { Container, Typography, Paper, Button, Avatar, Divider, Grid, IconButton, Pagination, PaginationItem, FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,7 +16,9 @@ const AllBooking = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [view, setView] = useState('');
   const [page, setPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState('desc');
   const bookingsPerPage = 5;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -33,6 +35,20 @@ const AllBooking = () => {
 
     fetchBookings();
   }, []);
+
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value);
+  };
+
+  // Sort bookings based on sortOrder state
+  const sortedBookings = [...bookings].sort((a, b) => {
+    const dateA = new Date(a.date.startTime);
+    const dateB = new Date(b.date.startTime);
+    return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+  });
+
+  const displayedBookings = sortedBookings.slice((page - 1) * bookingsPerPage, page * bookingsPerPage);
+
 
   if (error) return <Typography color="error">{error}</Typography>;
   if (!bookings.length) return <Typography>Loading...</Typography>;
@@ -52,8 +68,6 @@ const AllBooking = () => {
   const handleChangePage = (event, value) => {
     setPage(value);
   };
-  const displayedBookings = bookings.slice((page - 1) * bookingsPerPage, page * bookingsPerPage);
-   /*const { date, userId, caretakerId, petId, petparentId, totalAmount, serviceName, status, bookingDurationInHours } = bookings;*/
 
   return (
     <Container>
@@ -61,6 +75,19 @@ const AllBooking = () => {
     {bookings.length > 0 ? (
     <>
     <Typography variant="h4" gutterBottom>Bookings History</Typography>
+    <Box display="flex" justifyContent="flex-end" marginBottom={2}>
+            <FormControl>
+              <InputLabel>Sort By</InputLabel>
+              <Select
+                value={sortOrder}
+                onChange={handleSortChange}
+                label="Sort By"
+              >
+                <MenuItem value="desc">Newest First</MenuItem>
+                <MenuItem value="asc">Oldest First</MenuItem>
+              </Select>
+            </FormControl>
+    </Box>
     <Grid container spacing={3}>
     <Grid item xs={6}>
     {displayedBookings.map((booking) => (
@@ -102,7 +129,7 @@ const AllBooking = () => {
           <Typography variant="body1"><strong>Total Amount:</strong> ₹{selectedBooking.totalAmount.toFixed(2)}</Typography>
           <Typography variant="body1"><strong>Booking Duration:</strong> {selectedBooking.bookingDurationInHours.toFixed(2)} hours</Typography>
           <Typography variant="body1"><strong>Status:</strong> {selectedBooking.status}</Typography>
-          <Button variant="contained" color="success"  style={{ marginTop: 10 }}>MakePayment</Button>
+          <Button variant="contained" color="primary"  onClick={() => navigate(`/booking-details/${selectedBooking._id}`)} style={{ marginTop: 10 }}>More Details</Button>
           <Divider style={{ margin: '20px 0' }} />
           <Button variant="contained" color="secondary" onClick={() => toggleView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
           <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')}>View Care-Taker Details</Button>
