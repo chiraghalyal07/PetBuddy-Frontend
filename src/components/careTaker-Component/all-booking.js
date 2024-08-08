@@ -109,7 +109,7 @@ const AllBookingCareTaker = () => {
       <Grid container spacing={3}>
       <Grid item xs={6}>
       {displayedBookings.map((booking) => (
-        <Paper key={booking._id} style={{ padding: 20, marginBottom: 20 }}>
+        <Paper key={booking._id} style={{ padding: 20, marginBottom: 20 , backgroundColor: '#e6e6e6' }}>
           <Typography variant="h6" gutterBottom>Booking for {booking.petId.petName} By {booking.userId.username}</Typography>
           <Typography variant="body1"><strong>Service Name:</strong> {booking.serviceName}</Typography>
           <Typography variant="body1"><strong>Total Amount:</strong> ₹{booking.totalAmount.toFixed(2)}</Typography>
@@ -133,7 +133,7 @@ const AllBookingCareTaker = () => {
       <Grid item xs={6}>
       {selectedBooking && (
         <div>
-          <Paper style={{ padding: 20, marginTop: 20, position: 'relative' }}>
+          <Paper style={{ padding: 20, marginTop: 20, position: 'relative', backgroundColor: '#e6e6e6' }}>
             <IconButton
               onClick={handleCloseDetails}
               style={{ position: 'absolute', top: 10, right: 10 }}
@@ -153,7 +153,7 @@ const AllBookingCareTaker = () => {
             <Button variant="contained" color="secondary" onClick={() => toggleView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
             <Button variant="contained" color="secondary" onClick={() => toggleView('petParentDetails')}>View Pet Parent Details</Button>
             {view === 'petDetails' && (
-              <Paper style={{ padding: 20, marginTop: 20 }}>
+              <Paper style={{ padding: 20, marginTop: 20}}>
                 <Typography variant="h6" gutterBottom>Pet Details</Typography>
                 <Typography variant="body1"><strong>Pet Name:</strong> {selectedBooking.petId.petName}</Typography>
                 <Typography variant="body1"><strong>Age:</strong> {selectedBooking.petId.age}</Typography>

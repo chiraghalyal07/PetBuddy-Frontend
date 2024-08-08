@@ -80,150 +80,6 @@ export default CareTakerAVList
 // const searchedOne = await response.find(searchQuery)
 */
 
-/*
-import React, { useEffect, useState } from 'react';
-import axios from '../../config/axios';
-import { Link } from 'react-router-dom';
-import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
-import NewReleasesRoundedIcon from '@mui/icons-material/NewReleasesRounded';
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardMedia,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-} from '@mui/material';
-
-const CareTakerAVList = () => {
-  const [careTakers, setCareTakers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState(null);
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    const fetchCareTakers = async () => {
-      try {
-        const response = await axios.get('/api/allcaretakers', {
-          headers: {
-            Authorization: localStorage.getItem('token'),
-          },
-        });
-        setCareTakers(response.data);
-        setLoading(false);
-      } catch (errors) {
-        console.log(errors.message);
-        setErrors(errors);
-        setLoading(false);
-      }
-    };
-    fetchCareTakers();
-  }, []);
-
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-  };
-
-  const filteredCareTakers = careTakers.filter(careTaker =>
-    careTaker.careTakerBusinessName.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) return <div>Loading...</div>;
-  if (errors) return <div>{errors}</div>;
-
-  return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Verified Caretakers List
-      </Typography>
-      <TextField
-        label="Search by Business Name"
-        variant="outlined"
-        fullWidth
-        value={search}
-        onChange={handleSearchChange}
-        style={{ marginBottom: '20px' }}
-      />
-      {filteredCareTakers.map(careTaker => (
-        <Card key={careTaker._id} style={{ marginBottom: '20px' }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between">
-              <Box>
-               
-                <Typography variant="body1"><b>Business Name:</b> {careTaker.careTakerBusinessName}</Typography>
-                <Typography variant="body1"><b>Address:</b> {careTaker.address}</Typography>
-                <Typography variant="body1"><b>Bio:</b> {careTaker.bio}</Typography>
-                <Typography variant="body1">
-                      <strong>Verified Account:</strong> 
-                      {careTaker.verifiedByAdmin ? 
-                        <VerifiedRoundedIcon color="primary" style={{ marginLeft: 10 }} /> : 
-                        <NewReleasesRoundedIcon color="error" style={{ marginLeft: 10 }} />}
-                    </Typography>
-                <Typography variant="h6"><strong>Services:</strong></Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Service Name</TableCell>
-                        <TableCell>Service Amount</TableCell>
-                        <TableCell>Service Time</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {careTaker.serviceCharges.map((charge, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{charge.name}</TableCell>
-                          <TableCell>{charge.amount}</TableCell>
-                          <TableCell>{charge.time}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-              <Box>
-                <CardMedia
-                  component="img"
-                  alt="Profile"
-                  image={careTaker.photo}
-                  style={{
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                  }}
-                />
-                <Typography variant="h6">Proof Document</Typography>
-                {careTaker.proof.endsWith('.pdf') ? (
-                  <a href={careTaker.proof} target="_blank" rel="noreferrer">View PDF</a>
-                ) : (
-                  <img src={careTaker.proof} alt="Proof" style={{ maxWidth: '200px' }} />
-                )}
-              </Box>
-            </Box>
-            <Box mt={2}>
-              <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
-            </Box>
-          </CardContent>
-        </Card>
-      ))}
-    </Container>
-  );
-};
-
-export default CareTakerAVList;
-//working good without leaflet
-*/
-
-
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/axios';
 import { Link } from 'react-router-dom';
@@ -246,35 +102,54 @@ import {
   TextField,
 } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-// Function to create custom marker icons
-const createIcon = (url) => {
-  return new L.Icon({
-    iconUrl: url,
-    iconSize: [50, 50],
-    iconAnchor: [25, 50],
-    popupAnchor: [0, -50],
-    className: 'leaflet-marker-icon'
-  });
-};
+// Fix the default icon issue
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
+const defaultIcon = new L.Icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  shadowSize: [41, 41],
+});
 
 const CareTakerAVList = () => {
   const [careTakers, setCareTakers] = useState([]);
+  const [completedBookings, setCompletedBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(null);
   const [search, setSearch] = useState('');
+  const [mapCenter, setMapCenter] = useState([51.505, -0.09]);
+  const [mapZoom, setMapZoom] = useState(13);
 
   useEffect(() => {
     const fetchCareTakers = async () => {
       try {
-        const response = await axios.get('/api/allcaretakers', {
-          headers: {
-            Authorization: localStorage.getItem('token'),
-          },
-        });
+        const response = await axios.get(`/api/allcaretakers?search=${search}`);
         setCareTakers(response.data);
+
+        // Handle multiple locations for search results
+        if (response.data.length > 0) {
+          const latitudes = response.data.map(careTaker => careTaker.location.coordinates[1]);
+          const longitudes = response.data.map(careTaker => careTaker.location.coordinates[0]);
+
+          // Update map center and zoom based on locations
+          const avgLat = latitudes.reduce((a, b) => a + b) / latitudes.length;
+          const avgLng = longitudes.reduce((a, b) => a + b) / longitudes.length;
+
+          setMapCenter([avgLat, avgLng]);
+          setMapZoom(13);
+        }
+        
         setLoading(false);
       } catch (errors) {
         console.log(errors.message);
@@ -282,20 +157,29 @@ const CareTakerAVList = () => {
         setLoading(false);
       }
     };
+    const fetchCompletedBookings = async () => {
+      try {
+        const response = await axios.get('/api/caretaker-book-count');
+        setCompletedBookings(response.data);
+      } catch (errors) {
+        console.log(errors.message);
+        setErrors(errors);
+      }
+    };
+
     fetchCareTakers();
-  }, []);
+    fetchCompletedBookings();
+  }, [search]);
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
   };
 
-  const filteredCareTakers = careTakers.filter(careTaker =>
-    careTaker.careTakerBusinessName.toLowerCase().includes(search.toLowerCase()) ||
-    careTaker.address.toLowerCase().includes(search.toLowerCase())
-  );
-
   if (loading) return <div>Loading...</div>;
   if (errors) return <div>{errors}</div>;
+
+
+  const hasSearchResults = search && careTakers.length > 0;
 
   return (
     <Container>
@@ -310,96 +194,102 @@ const CareTakerAVList = () => {
         onChange={handleSearchChange}
         style={{ marginBottom: '20px' }}
       />
-      <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: '400px', marginBottom: '20px' }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {filteredCareTakers
-          .filter(careTaker => careTaker.latitude && careTaker.longitude)
-          .map(careTaker => (
-            <Marker
-              key={careTaker._id}
-              position={[careTaker.latitude, careTaker.longitude]}
-              icon={createIcon(careTaker.photo)}
-            >
-              <Popup>
-                <div>
+      {hasSearchResults && (
+        <MapContainer center={mapCenter} zoom={mapZoom} style={{ height: '400px', marginBottom: '20px' }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          {careTakers
+            .filter(careTaker => careTaker.location && careTaker.location.coordinates.length === 2)
+            .map(careTaker => (
+              <Marker
+                key={careTaker._id}
+                position={[careTaker.location.coordinates[1], careTaker.location.coordinates[0]]}
+                icon={defaultIcon} // Use default icon for debugging
+                
+              >
+                <Popup>
+                  <div>
+                    <Typography variant="body1"><b>Business Name:</b> {careTaker.careTakerBusinessName}</Typography>
+                    <Typography variant="body1"><b>Address:</b> {careTaker.address}</Typography>
+                    {careTaker.serviceCharges.map((charge, index) => (
+                      <Typography variant="body2" key={index}>
+                        {charge.name}: {charge.amount}
+                      </Typography>
+                    ))}
+                    <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
+                  </div>
+                </Popup>
+              </Marker>
+            ))
+          }
+        </MapContainer>
+      )}
+      {careTakers.map(careTaker => {
+        const completedBooking = completedBookings.find(cb => cb.caretakerId === careTaker._id);
+         return (
+            <Card key={careTaker._id} style={{ marginBottom: '20px', backgroundColor: '#e6e6e6' }}>
+            <CardContent>
+              <Box display="flex" justifyContent="space-between">
+                <Box>
                   <Typography variant="body1"><b>Business Name:</b> {careTaker.careTakerBusinessName}</Typography>
                   <Typography variant="body1"><b>Address:</b> {careTaker.address}</Typography>
-                  {careTaker.serviceCharges.map((charge, index) => (
-                    <Typography variant="body2" key={index}>
-                      {charge.name}: {charge.amount}
-                    </Typography>
-                  ))}
-                  <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
-                </div>
-              </Popup>
-            </Marker>
-          ))
-        }
-      </MapContainer>
-      {filteredCareTakers.map(careTaker => (
-        <Card key={careTaker._id} style={{ marginBottom: '20px', backgroundColor: '#f6be7e' }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between">
-              <Box>
-                <Typography variant="body1"><b>Business Name:</b> {careTaker.careTakerBusinessName}</Typography>
-                <Typography variant="body1"><b>Address:</b> {careTaker.address}</Typography>
-                <Typography variant="body1"><b>Bio:</b> {careTaker.bio}</Typography>
-                <Typography variant="body1">
-                  <strong>Verified Account:</strong> 
-                  {careTaker.verifiedByAdmin ? 
-                    <VerifiedRoundedIcon color="primary" style={{ marginLeft: 10 }} /> : 
-                    <NewReleasesRoundedIcon color="error" style={{ marginLeft: 10 }} />}
-                </Typography>
-                <Typography variant="h6"><strong>Services:</strong></Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Service Name</TableCell>
-                        <TableCell>Service Amount</TableCell>
-                        <TableCell>Service Time</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {careTaker.serviceCharges.map((charge, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{charge.name}</TableCell>
-                          <TableCell>{charge.amount}</TableCell>
-                          <TableCell>{charge.time}</TableCell>
+                  <Typography variant="body1"><b>Bio:</b> {careTaker.bio}</Typography>
+                  <Typography variant="body1">
+                    <strong>Verified Account:</strong> 
+                    {careTaker.verifiedByAdmin ? 
+                      <VerifiedRoundedIcon color="primary" style={{ marginLeft: 10 }} /> : 
+                      <NewReleasesRoundedIcon color="error" style={{ marginLeft: 10 }} />}
+                  </Typography> <Typography variant="body1"><b>Completed Bookings:</b> {completedBooking ? completedBooking.completedBookings : 'N/A'}</Typography>
+                  <Typography variant="h6"><strong>Services:</strong></Typography>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Service Name</TableCell>
+                          <TableCell>Service Amount</TableCell>
+                          <TableCell>Service Time</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                      </TableHead>
+                      <TableBody>
+                        {careTaker.serviceCharges.map((charge, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{charge.name}</TableCell>
+                            <TableCell>{charge.amount}</TableCell>
+                            <TableCell>{charge.time}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+                <Box>
+                  <CardMedia
+                    component="img"
+                    alt="Profile"
+                    image={careTaker.photo}
+                    style={{
+                      width: '150px',
+                      height: '150px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <Typography variant="h6">Proof Document</Typography>
+                  {careTaker.proof.endsWith('.pdf') ? (
+                    <a href={careTaker.proof} target="_blank" rel="noreferrer">View PDF</a>
+                  ) : (
+                    <img src={careTaker.proof} alt="Proof" style={{ maxWidth: '200px' }} />
+                  )}
+                </Box>
               </Box>
-              <Box>
-                <CardMedia
-                  component="img"
-                  alt="Profile"
-                  image={careTaker.photo}
-                  style={{
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                    objectFit: 'cover',
-                  }}
-                />
-                <Typography variant="h6">Proof Document</Typography>
-                {careTaker.proof.endsWith('.pdf') ? (
-                  <a href={careTaker.proof} target="_blank" rel="noreferrer">View PDF</a>
-                ) : (
-                  <img src={careTaker.proof} alt="Proof" style={{ maxWidth: '200px' }} />
-                )}
+              <Box mt={2}>
+                <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
               </Box>
-            </Box>
-            <Box mt={2}>
-              <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
-            </Box>
-          </CardContent>
-        </Card>
-      ))}
+            </CardContent>
+          </Card>
+         );
+         })}
     </Container>
   );
 };

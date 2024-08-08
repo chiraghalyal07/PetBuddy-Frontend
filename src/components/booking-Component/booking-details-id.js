@@ -120,15 +120,15 @@ const BookingDetails = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>Booking Details</Typography>
-      <Paper style={{ padding: 20, marginBottom: 20 }}>
+      <Paper style={{ padding: 20, marginBottom: 20 ,backgroundColor: '#e6e6e6'}}>
         <Typography variant="h6" gutterBottom><strong>Service Details</strong></Typography>
         <Typography variant="body1"><strong>Service Name:</strong> {serviceName}</Typography>
         <Typography variant="body1"><strong>Start Time:</strong> {new Date(date.startTime).toLocaleString()}</Typography>
         <Typography variant="body1"><strong>End Time:</strong> {new Date(date.endTime).toLocaleString()}</Typography>
-        <Typography variant="body1"><strong>Total Amount:</strong> ₹{totalAmount}</Typography>
-        <Typography variant="body1"><strong>Booking Duration:</strong> {bookingDurationInHours} hours</Typography>
+        <Typography variant="body1"><strong>Total Amount:</strong> ₹{totalAmount.toFixed(2)}</Typography>
+        <Typography variant="body1"><strong>Booking Duration:</strong> {bookingDurationInHours.toFixed(2)} hours</Typography>
         <Typography variant="body1"><strong>Status:</strong> {status}</Typography>
-        <Typography variant="body1"><strong>Booking Acceptance:</strong> {Accepted ? 'Accepted' : 'Denied'}</Typography>
+        <Typography variant="body1"><strong>Booking Acceptance:</strong> {Accepted ? 'Accepted' : status.cancelled ? 'Denied':'Not-Yet-Accepted'}</Typography>
       </Paper>
      
       <Button variant="contained" color="primary" onClick={() => navigate(`/payment/${bookingId}`)} style={{ marginRight: 10 }}>Make Payment</Button>
@@ -137,7 +137,7 @@ const BookingDetails = () => {
       <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')} style={{ marginRight: 10 }}>View CareTaker Details</Button>
       <Button variant="contained" color="secondary" onClick={()=> navigate(`/booking-history`)} style={{ marginRight: 10 }}>Booking History</Button>
       {view === 'petDetails' && (
-        <Paper style={{ padding: 20, marginTop: 20 }}>
+        <Paper style={{ padding: 20, marginTop: 20,backgroundColor: '#e6e6e6' }}>
           <Typography variant="h6" gutterBottom>Pet Details</Typography>
           <Typography variant="body1"><strong>Pet Name:</strong> {petId.petName}</Typography>
           <Typography variant="body1"><strong>Age:</strong> {petId.age}</Typography>
@@ -149,7 +149,7 @@ const BookingDetails = () => {
         </Paper>
       )}
       {view === 'careTakerDetails' && (
-        <Paper style={{ padding: 20, marginTop: 20 }}>
+        <Paper style={{ padding: 20, marginTop: 20,backgroundColor: '#e6e6e6' }}>
           <Typography variant="h6" gutterBottom>CareTaker Details</Typography>
           <Typography variant="body1"><strong>Business Name:</strong> {caretakerId.careTakerBusinessName}</Typography>
           <Typography variant="body1"><strong>Address:</strong> {caretakerId.address}</Typography>
