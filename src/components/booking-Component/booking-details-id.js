@@ -136,6 +136,8 @@ const BookingDetails = () => {
       <Button variant="contained" color="secondary" onClick={() => toggleView('petDetails')} style={{ marginRight: 10 }}>View Pet Details</Button>
       <Button variant="contained" color="secondary" onClick={() => toggleView('careTakerDetails')} style={{ marginRight: 10 }}>View CareTaker Details</Button>
       <Button variant="contained" color="secondary" onClick={()=> navigate(`/booking-history`)} style={{ marginRight: 10 }}>Booking History</Button>
+      <Button variant="contained" color="secondary" onClick={()=> navigate(`/create-review/${bookingId}`)} style={{ marginRight: 10 }}>Make-Review</Button> 
+      <Button variant="contained" color="secondary" onClick={()=>navigate(`/single-careTaker-review/${caretakerId._id}`)} style={{ marginRight: 10 }}>View-Review</Button> 
       {view === 'petDetails' && (
         <Paper style={{ padding: 20, marginTop: 20,backgroundColor: '#e6e6e6' }}>
           <Typography variant="h6" gutterBottom>Pet Details</Typography>

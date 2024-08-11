@@ -1,105 +1,3 @@
-/*
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from '../../config/axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-const CareTakerSingleDetails = () => {
-    const { id } = useParams();
-    const [careTaker, setCareTaker] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const fetchCareTaker = async () => {
-            try {
-                const response = await axios.get(`/api/singlecaretaker/${id}`, {
-                    headers: {
-                        Authorization: localStorage.getItem('token'),
-                    },
-                });
-                setCareTaker(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error(error.message);
-                setError('Something went wrong');
-                setLoading(false);
-            }
-        };
-
-        fetchCareTaker();
-    }, []);
-
-    
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
-
-    return (
-        <div>
-            <h2>CareTaker Details</h2>
-            {careTaker.careTakerBusinessName ? (
-                <div className='care-taker-card'>
-                    {careTaker.userId ? (
-                        <>
-                            <p>Username: <b>{careTaker.userId.username}</b></p>
-                            <p>Email: {careTaker.userId.email}</p>
-                            <p>Phone: {careTaker.userId.phoneNumber}</p>
-                        </>
-                    ) : (
-                        <p>User Information not available</p>
-                    )}
-                    <p>Care-Taker Business Name: {careTaker.careTakerBusinessName}</p>
-                    <p>Address: {careTaker.address}</p>
-                    <p>Bio: {careTaker.bio}</p>
-                    <div>
-                        <h3>Services:</h3>
-                        {careTaker.serviceCharges && careTaker.serviceCharges.length > 0 ? (
-                            careTaker.serviceCharges.map((charge, index) => (
-                                <div key={index}>
-                                    <p>Service Name: {charge.name}</p>
-                                    <p>Service Amount: {charge.amount}</p>
-                                    <p>Service Time: {charge.time}</p>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No services available</p>
-                        )}
-                    </div>
-                    <div>
-                        <h3>Profile Photo</h3>
-                        <img src={careTaker.photo} alt='Profile' style={{ maxWidth: '200px' }} />
-                    </div>
-                    <div>
-                        <h3>Proof Document</h3>
-                        {careTaker.proof ? (
-                            careTaker.proof.endsWith('.pdf') ? (
-                                <a href={careTaker.proof} target='_blank' rel='noreferrer'>View PDF</a>
-                            ) : (
-                                <img src={careTaker.proof} alt='Proof' style={{ maxWidth: '200px' }} />
-                            )
-                        ) : (
-                            <p>No proof document available</p>
-                        )}
-                    </div>
-                    <button onClick={() => navigate(`/create-booking/${id}`)}>Book Now</button>
-                    
-                </div>
-            ) : (
-                <div>
-                    <p>No CareTaker profile found.</p>
-                    <button onClick={() => navigate(`/create-caretaker`)}>Select Another CareTaker</button>
-                </div>
-            )}
-            <ToastContainer />
-        </div>
-    );
-};
-
-export default CareTakerSingleDetails;
-*/
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams,Link } from 'react-router-dom';
@@ -109,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import Swal from 'sweetalert2';
 import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 import NewReleasesRoundedIcon from '@mui/icons-material/NewReleasesRounded';
 import {
@@ -138,7 +37,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const CareTakerSingleDetails = () => {
+const AdminCareTakerSingleDetails = () => {
   const { id } = useParams();
   const [careTaker, setCareTaker] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -193,6 +92,68 @@ const CareTakerSingleDetails = () => {
     setIsMapMaximized(!isMapMaximized);
   };
 
+
+  // Handle verification of caretaker
+  const handleVerifyCareTaker = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to verify this CareTaker?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, verify it!',
+      });
+  
+      if (result.isConfirmed) {
+        const response = await axios.put(
+          `/api/admin/verify-caretakers/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: localStorage.getItem('token'),
+            },
+          }
+        );
+        Swal.fire('Success', 'CareTaker Successfully Verified', 'success');
+        setCareTaker(response.data.caretaker);
+      }
+    } catch (error) {
+      console.error('Error verifying caretaker:', error);
+      Swal.fire('Error', 'Something went wrong while verifying caretaker', 'error');
+    }
+  };
+
+  // Handle rejection of caretaker
+  const handleRejectCareTaker = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, reject it!',
+      });
+
+      if (result.isConfirmed) {
+        await axios.delete(`/api/deletecaretaker/${id}`, {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
+        });
+        Swal.fire('Rejected', 'CareTaker has been rejected.', 'error');
+        navigate('/admin/caretakers'); // Navigate back to caretakers list
+      }
+    } catch (error) {
+      console.error('Error rejecting caretaker:', error);
+      Swal.fire('Error', 'Something went wrong while rejecting caretaker', 'error');
+    }
+  };
+
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom><strong> CareTaker Details</strong></Typography>
@@ -242,7 +203,6 @@ const CareTakerSingleDetails = () => {
                         <NewReleasesRoundedIcon color="error" style={{ marginLeft: 10 }} />}
                     </Typography>
                     <Box mt={2}>
-                <Link to={`/single-careTaker-review/${careTaker._id}`}>View Rating</Link>
               </Box>
               </Grid>
             </Grid>
@@ -279,9 +239,19 @@ const CareTakerSingleDetails = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => navigate(`/create-booking/${id}`)}
+                startIcon={<VerifiedRoundedIcon />}
+                onClick={handleVerifyCareTaker}
               >
-                Book Now
+                Verify CareTaker
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<NewReleasesRoundedIcon />}
+                onClick={handleRejectCareTaker}
+                style={{ marginLeft: '10px' }}
+              >
+                Reject CareTaker
               </Button>
             </Box>
           </CardContent>
@@ -338,4 +308,4 @@ const CareTakerSingleDetails = () => {
   );
 };
 
-export default CareTakerSingleDetails;
+export default AdminCareTakerSingleDetails;

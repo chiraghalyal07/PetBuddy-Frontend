@@ -22,6 +22,7 @@ import AllBookingCareTaker from "./components/careTaker-Component/all-booking";
 import PetParentForm from "./components/petParent-Component/petParent-Form";
 import PetParentList from "./components/petParent-Component/petParent-list-all";
 import PetParentDetail from "./components/petParent-Component/petParent-Single";
+import PetParentDetailParamsId from "./components/petParent-Component/petParent-paramsId";
 import UpdatePetParent from "./components/petParent-Component/petParent-update";
 
 //Pets Creation
@@ -38,6 +39,20 @@ import BookingDetails from "./components/booking-Component/booking-details-id";
 import CreatePayment from "./components/payment-Component/payment-create";
 import Success from "./components/payment-Component/success";
 import Failure from "./components/payment-Component/failure";
+
+//review creation
+import CreateReview from "./components/review/createReview"
+import ReviewList from "./components/review/allReview"
+import SingleCaretakerReviews from "./components/review/singlereview-Id"
+import UpdateReview from "./components/review/updateReview"
+import SingleReviews from "./components/review/singlereview"
+
+import ReviewForm from "./components/review-Component/create-review";
+
+//Adimn Operations
+import AdminHome from "./components/admin-Components/admin-home";
+import CareTakerNVList from "./components/admin-Components/careTaker-NV-list";
+import AdminCareTakerSingleDetails from "./components/admin-Components/admin-caretaker-single";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -68,11 +83,13 @@ function App() {
         |<Link to='/account'>Account</Link>
         {/* |<Link to='/create-caretaker'>Create-Caretaker</Link> */}
         {/* |<Link to='/create-petparent'>Create-PetParent</Link> */}
+        |<Link to='/admin-home'>Admin-Home</Link>
         |<Link to='/all-petparents'>All-PetParents</Link>
         |<Link to='/all-caretaker-v'>All-v-CareTaker</Link>
         |<Link to='/single-caretaker'>Profile-C</Link>
         |<Link to='/single-petparent'>Profile-P</Link>
         |<Link to='/single-pet'>Pets-Profile</Link>
+        |<Link to='/all-review'>All-Review</Link>
         |<Link to='/' onClick={()=>{
           localStorage.removeItem('token')
           dispatch({type:'LOGOUT'})
@@ -101,6 +118,7 @@ function App() {
         <Route path="/create-petparent" element={<PetParentForm/>}/>
         <Route path="/all-petparents" element={<PetParentList/>}/>
         <Route path="/single-petparent" element={<PetParentDetail/>}/>
+        <Route path="/petparent-params-one/:id" element={<PetParentDetailParamsId/>}/>
         <Route path="/update-petparent/:id" element={<UpdatePetParent/>}/>
 
         <Route path="/create-pet" element={<PetForm/>}/>
@@ -114,6 +132,20 @@ function App() {
         <Route path="/payment/:bookingId" element={<CreatePayment/>} />
         <Route path="/success" element={<Success />} />
         <Route path="/failure" element={<Failure />} />
+
+        <Route path="/create-review/:id" element={<CreateReview/>}/>
+        <Route path="/single-careTaker-review/:caretakerId" element={<SingleReviews/>}/>
+        <Route path="/update-review/:reviewId" element={<UpdateReview/>}/>
+        <Route path="/all-review" element={<ReviewList/>}/>
+        <Route path="/singleReview/:reviewId" element={<SingleCaretakerReviews />} /> 
+
+        <Route path="/create-review-form/:id" element={<ReviewForm/>}/>
+
+        <Route path="/admin-home" element={<AdminHome/>}/>
+        <Route path="/admin-care-nv-list" element={<CareTakerNVList/>}/>
+        <Route path="/admin-care-verify/:id" element={<AdminCareTakerSingleDetails/>}/>
+  
+  
 
 
       </Routes>

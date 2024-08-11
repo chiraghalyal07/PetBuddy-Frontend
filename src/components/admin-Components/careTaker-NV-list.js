@@ -1,85 +1,3 @@
-/*
-import React,{useEffect,useState} from 'react';
-import axios from '../../config/axios';
-import {Link} from 'react-router-dom'
-
-const CareTakerAVList = () =>{
-    const [careTakers,setCareTakers] = useState([]);
-    const [loading,setLoading] = useState(true);
-    const [errors,setErrors] = useState(null);
-    useEffect(() =>{
-        const fetchCareTakers = async () =>{
-            try{
-                const response = await axios.get('/api/allcaretakers',{
-                    headers:{
-                        Authorization:localStorage.getItem('token')
-                    }
-                });
-                setCareTakers(response.data);
-                setLoading(false);
-            }catch(errors){
-                console.log(errors.message)
-                setErrors(errors);
-                setLoading(false);
-            }
-        };
-        fetchCareTakers();
-    },[]);
-
-    if(loading)return<div>Loading...</div>;
-    if(errors)return<div>{errors}</div>
-
-    return(
-        <div>
-            <h2>Verified Caretakers List</h2>
-            {careTakers.map(careTaker =>(
-                <div key={careTaker._id} className='care-taker-card'>
-                    {careTaker.userId ?(
-                        <>
-                        <h2>{careTaker.userId.username}</h2>
-                        <p>Email:{careTaker.userId.email}</p>
-                        <p>Phone:{careTaker.userId.phoneNumber}</p>
-                        </>
-                    ):(
-                        <p>User Information not available</p>
-                    )}
-                    <p>Care-Taker Business Name:{careTaker.careTakerBusinessName}</p>
-                    <p>Address:{careTaker.address}</p>
-                    <p>Bio:{careTaker.bio}</p>
-                    <div>
-                        <h3>Services:</h3>
-                        {careTaker.serviceCharges.map((charge, index) => (
-                            <div key={index}>
-                                <p>Service Name: {charge.name}</p>
-                                <p>Service Amount: {charge.amount}</p>
-                                <p>Service Time: {charge.time}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <div>
-                        <h3>Profile Photo</h3>
-                        <img src={careTaker.photo} alt='Profile' style={{maxWidth:'200px'}}/>
-                    </div>
-                    <div>
-                        <h3>Proof Document</h3>
-                        {careTaker.proof.endsWith('.pdf')?(
-                            <a href={careTaker.proof} target='_blank' rel='noreferrer'>View PDF</a>
-                        ):(
-                            <img src={careTaker.proof} alt='Proof' style={{maxWidth:'200px'}}/>
-                        )}
-                    </div>
-                    <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
-                </div>
-            ))}
-        </div>
-    )
-}
-export default CareTakerAVList
-// const search = req.query.search||''
-// const searchQuery = {adderss:{$regex:search,$options:'i'}}
-// const searchedOne = await response.find(searchQuery)
-*/
-
 import React, { useEffect, useState } from 'react';
 import axios from '../../config/axios';
 import { Link } from 'react-router-dom';
@@ -100,8 +18,6 @@ import {
   TableRow,
   Paper,
   TextField,
-  CircularProgress,
-  Rating,
 } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -124,38 +40,21 @@ const defaultIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-const CareTakerAVList = () => {
+const CareTakerNVList = () => {
   const [careTakers, setCareTakers] = useState([]);
-  const [completedBookings, setCompletedBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(null);
   const [search, setSearch] = useState('');
   const [mapCenter, setMapCenter] = useState([51.505, -0.09]);
   const [mapZoom, setMapZoom] = useState(13);
-  const [ratings, setRatings] = useState({});
 
 
   useEffect(() => {
     const fetchCareTakers = async () => {
       try {
-        const response = await axios.get(`/api/allcaretakers?search=${search}`);
+        const response = await axios.get(`/api/admin/caretakers?search=${search}`);
         const careTakersData = response.data;
         setCareTakers(careTakersData);
-
-        // Fetch ratings data for each caretaker
-        const ratingsData = {};
-        await Promise.all(careTakersData.map(async (careTaker) => {
-          try {
-            console.log('iiiddd:',careTaker._id)
-            const ratingResponse = await axios.get(`/caretaker-ratings/${careTaker._id}`);
-            ratingsData[careTaker._id] = ratingResponse.data;
-          } catch (ratingError) {
-            console.error(`Failed to fetch ratings for caretaker ${careTaker._id}:`, ratingError);
-          }
-        }));
-        console.log('rate:',ratingsData)
-        setRatings(ratingsData);
-
         
         // Handle multiple locations for search results
         if (response.data.length > 0) {
@@ -177,18 +76,7 @@ const CareTakerAVList = () => {
         setLoading(false);
       }
     };
-    const fetchCompletedBookings = async () => {
-      try {
-        const response = await axios.get('/api/caretaker-book-count');
-        setCompletedBookings(response.data);
-      } catch (errors) {
-        console.log(errors.message);
-        setErrors(errors);
-      }
-    };
-
     fetchCareTakers();
-    fetchCompletedBookings();
   }, [search]);
 
   const handleSearchChange = (event) => {
@@ -204,7 +92,7 @@ const CareTakerAVList = () => {
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
-        Verified Caretakers List
+        Not-Verified Caretakers List
       </Typography>
       <TextField
         label="Search by Business Name or Address"
@@ -237,7 +125,7 @@ const CareTakerAVList = () => {
                         {charge.name}: {charge.amount}
                       </Typography>
                     ))}
-                    <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
+                    <Link to={`/admin-care-verify/${careTaker._id}`}>View Details</Link>
                   </div>
                 </Popup>
               </Marker>
@@ -246,8 +134,7 @@ const CareTakerAVList = () => {
         </MapContainer>
       )}
       {careTakers.map(careTaker => {
-        const completedBooking = completedBookings.find(cb => cb.caretakerId === careTaker._id);
-        const rating = ratings[careTaker._id] || { totalRating: 'N/A', numberOfRatings: 0 };
+       
          return (
             <Card key={careTaker._id} style={{ marginBottom: '20px', backgroundColor: '#e6e6e6' }}>
             <CardContent>
@@ -256,15 +143,7 @@ const CareTakerAVList = () => {
                   <Typography variant="body1"><b>Business Name:</b> {careTaker.careTakerBusinessName}</Typography>
                   <Typography variant="body1"><b>Address:</b> {careTaker.address}</Typography>
                   <Typography variant="body1"><b>Bio:</b> {careTaker.bio}</Typography>
-                  <Typography variant="body1">
-                    <strong>Verified Account:</strong> 
-                    {careTaker.verifiedByAdmin ? 
-                      <VerifiedRoundedIcon color="primary" style={{ marginLeft: 10 }} /> : 
-                      <NewReleasesRoundedIcon color="error" style={{ marginLeft: 10 }} />}
-                  </Typography> <Typography variant="body1"><b>Completed Bookings:</b> {completedBooking ? completedBooking.completedBookings : 'N/A'}</Typography>
-                   <Typography variant="body1"><b>Rating:</b><Rating value={parseFloat(rating.totalRating)} readOnly precision={0.1} /> {rating.totalRating}</Typography>
-                  
-                  {/* <Typography variant="body1"><b>Number of Ratings:</b> {rating.numberOfRatings}</Typography> */}
+                
                   <Typography variant="h6"><strong>Services:</strong></Typography>
                   <TableContainer component={Paper}>
                     <Table>
@@ -308,7 +187,7 @@ const CareTakerAVList = () => {
                 </Box>
               </Box>
               <Box mt={2}>
-                <Link to={`/caretaker-params-one/${careTaker._id}`}>View Details</Link>
+                <Link to={`/admin-care-verify/${careTaker._id}`}>View Details</Link>
               </Box>
             </CardContent>
           </Card>
@@ -318,4 +197,4 @@ const CareTakerAVList = () => {
   );
 };
 
-export default CareTakerAVList;
+export default CareTakerNVList;
