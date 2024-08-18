@@ -4,7 +4,7 @@ import { Container, Typography, Card, CardContent, CardMedia, CircularProgress, 
 import axios from '../../config/axios';
 import { useParams } from 'react-router-dom';
 
-export default function PetsByParent() {
+export default function AllPets() {
     const { petParentId } = useParams();
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,12 +13,12 @@ export default function PetsByParent() {
     useEffect(() => {
         const fetchPets = async () => {
             try {
-                const response = await axios.get(`/api/admin/pets`, {
+                const response = await axios.get(`/api/allpets`, {
                     headers: {
                         Authorization: ` ${localStorage.getItem('token')}`,
                     },
                 });
-                console.log('API response:', response.data); // Log API response for debugging
+                console.log('API response:', response.data); 
                 setPets(response.data);
             } catch (error) {
                 console.error('Error fetching pets:', error);

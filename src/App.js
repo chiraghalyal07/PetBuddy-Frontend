@@ -2,8 +2,11 @@ import {Link, Routes, Route} from "react-router-dom"
 import { useEffect } from "react";
 import axios from "./config/axios";
 import { useAuth } from "./context/authContext";
+import Header from "./components/home-Component/header";
+import Footer from "./components/home-Component/footer";
+//home-Component
+import Home from "./components/home-Component/home";
 //User-Registeration
-import Home from "./components/userRegistration/home";
 import Register from "./components/userRegistration/register";
 import OtpVerification from "./components/userRegistration/otpVerify";
 import Login from "./components/userRegistration/login";
@@ -17,6 +20,7 @@ import CareTakerDetails from "./components/careTaker-Component/careTaker-single"
 import CareTakerSingleDetails from "./components/careTaker-Component/careTaker-one-params";
 import UpdateCareTaker from "./components/careTaker-Component/careTaker-update";
 import AllBookingCareTaker from "./components/careTaker-Component/all-booking";
+import CareTakerList from "./components/careTaker-Component/careTaker-Service";
 
 //Pet-Parent Creation
 import PetParentForm from "./components/petParent-Component/petParent-Form";
@@ -29,6 +33,7 @@ import UpdatePetParent from "./components/petParent-Component/petParent-update";
 import PetForm from "./components/pets-Component/pet-create";
 import PetAccount from "./components/pets-Component/pet-singlepet";
 import PetUpdate from "./components/pets-Component/pet-update";
+import PetSingleId from "./components/pets-Component/pet-single-parentId";
 
 //booking Creation
 import BookingForm from "./components/booking-Component/booking-create";
@@ -53,6 +58,7 @@ import ReviewForm from "./components/review-Component/create-review";
 import AdminHome from "./components/admin-Components/admin-home";
 import CareTakerNVList from "./components/admin-Components/careTaker-NV-list";
 import AdminCareTakerSingleDetails from "./components/admin-Components/admin-caretaker-single";
+import AllPets from "./components/admin-Components/admin-pets-all";
 
 function App() {
   const {user,dispatch} = useAuth()
@@ -70,7 +76,9 @@ function App() {
   },[])
   
   return (
-    <div >
+    <div  style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Header/>
+      {/*
       <h1>PetBuddy</h1>
       <Link to='/'>Home</Link>
       {!user.isLoggedIn ?(
@@ -81,8 +89,8 @@ function App() {
       ):(
         <>
         |<Link to='/account'>Account</Link>
-        {/* |<Link to='/create-caretaker'>Create-Caretaker</Link> */}
-        {/* |<Link to='/create-petparent'>Create-PetParent</Link> */}
+        {/* |<Link to='/create-caretaker'>Create-Caretaker</Link> /}
+        {/* |<Link to='/create-petparent'>Create-PetParent</Link> /}
         |<Link to='/admin-home'>Admin-Home</Link>
         |<Link to='/all-petparents'>All-PetParents</Link>
         |<Link to='/all-caretaker-v'>All-v-CareTaker</Link>
@@ -97,7 +105,8 @@ function App() {
         </>
       )}
       
-      
+      */}
+      <div style={{ flex: 1 }}>
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/register" element={<Register/>}/>
@@ -113,6 +122,7 @@ function App() {
         <Route path="/single-caretaker" element={<CareTakerDetails/>}/>
         <Route path="/update-caretaker/:id" element={<UpdateCareTaker/>}/>
         <Route path="/all-booking-caretaker" element={<AllBookingCareTaker/>}/>
+        <Route path="/caretaker-service" element={<CareTakerList/>}/>
         
 
         <Route path="/create-petparent" element={<PetParentForm/>}/>
@@ -124,6 +134,7 @@ function App() {
         <Route path="/create-pet" element={<PetForm/>}/>
         <Route path="/single-pet" element={<PetAccount/>}/>
         <Route path="/update-pet/:id" element={<PetUpdate/>}/>
+        <Route path="/pet-single-parent/:id" element={<PetSingleId/>}/>
 
         <Route path="/create-booking/:id" element={<BookingForm/>}/>
         <Route path="/booking-history" element={<AllBooking/>}/>
@@ -144,11 +155,14 @@ function App() {
         <Route path="/admin-home" element={<AdminHome/>}/>
         <Route path="/admin-care-nv-list" element={<CareTakerNVList/>}/>
         <Route path="/admin-care-verify/:id" element={<AdminCareTakerSingleDetails/>}/>
+        <Route path="/all-pets" element={<AllPets/>}/>
   
   
 
 
       </Routes>
+      </div>
+      <Footer /> {/* Include the Footer */}
     </div>
   );
 }

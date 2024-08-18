@@ -251,6 +251,7 @@ const PetParentDetailParamsId = () => {
                     Delete Profile
                   </Button>
                 )}
+                <Button onClick={()=>navigate(`/pet-single-parent/${id}`)}>View-Pet-Details</Button>
               </Grid>
             </Grid>
           </CardContent>

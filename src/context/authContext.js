@@ -23,7 +23,11 @@ const reducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
     const [user, dispatch] = useReducer(reducer, {
         isLoggedIn: false, 
-        account: null,
+        account: {
+            username: 'N/A',
+            email: 'N/A',
+            role: 'N/A'
+        }
     })
    
 

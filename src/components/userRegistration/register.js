@@ -144,14 +144,14 @@ export default function Register(){
     )
 
 }*/
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import validator from 'validator';
 import axios from '../../config/axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import _ from 'lodash';
 import {toast,ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Box, Typography, Card } from '@mui/material';
+import { TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Box, Typography, Card, CircularProgress} from '@mui/material';
 import backgroundimage from '../../images/Pets_Register2.jpg'
 
 export default function Register() {
@@ -166,6 +166,24 @@ export default function Register() {
         clientErrors: {}
     });
     const [errors, setErrors] = useState({});
+    const [isAdminAvailable, setIsAdminAvailable] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAdminAvailability = async () => {
+            try {
+                const response = await axios.get('/user/check-admin');
+                setIsAdminAvailable(response.data.isAdminAvailable);
+                setLoading(false);
+            } catch (err) {
+                console.log('Error fetching admin availability:', err);
+                setErrors(err)
+                setLoading(false);
+            }
+        };
+
+        fetchAdminAvailability();
+    }, []);
 
     const runValidation = () => {
         const tempErrors = {};
@@ -245,6 +263,21 @@ export default function Register() {
         }
         return null;
     };
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                }}
+            >
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Box
@@ -304,15 +337,20 @@ export default function Register() {
                     <FormControl component="fieldset" margin="normal" error={!!errors.role}>
                         <FormLabel component="legend">Select Role</FormLabel>
                         <RadioGroup row name="role" value={form.role} onChange={handleChange}>
-                            <FormControlLabel value="admin" control={<Radio />} label="Admin" />
+                            {isAdminAvailable && <FormControlLabel value="admin" control={<Radio />} label="Admin" />}
                             <FormControlLabel value="petParent" control={<Radio />} label="Pet Parent" />
                             <FormControlLabel value="careTaker" control={<Radio />} label="Care Taker" />
                         </RadioGroup>
                         {errors.role && <Typography color="error">{errors.role}</Typography>}
                     </FormControl>
-                    <Button type="submit" variant="contained" color="primary">Register</Button>
+                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Register</Button>
                 </form>
-                {displayErrors()}
+                <Box mt={2}>
+                <Link to="/login" style={{ textDecoration: 'none' }}>
+                    <Button color="secondary">Sign In</Button>
+                </Link>
+            </Box>
+            {displayErrors()}
             </Card>
             <ToastContainer/>
         </Box>

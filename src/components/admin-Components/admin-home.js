@@ -29,7 +29,9 @@ export default function AdminHome(){
              <Button onClick={() => navigate('/admin-care-nv-list')}>Not-Verified-List</Button>
              <Button onClick={() => navigate('/all-caretaker-v')}>Verified-List</Button>
              <p>Total-PetParents : {counts.petParents}</p>
+             <Button onClick={() => navigate('/all-petparents')}>All Parents</Button>
              <p>Total-Pets : {counts.pets}</p>
+             <Button onClick={()=>navigate('/all-pets')}>All-Pets</Button>
         </div>
        
     )
